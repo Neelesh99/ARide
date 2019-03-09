@@ -3,9 +3,11 @@
     <item android:drawable="@color/dark_grey"/>
     <item>
         <bitmap
+            android:scaleType="fitXY"
             android:gravity="center"
-            android:src="@mipmap/AR_Splash_2"
+            android:src="@mipmap/ar_splash_2"
             />
     </item>
+
 
 </layer-list>
