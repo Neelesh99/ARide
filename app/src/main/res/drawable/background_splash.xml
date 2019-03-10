@@ -4,7 +4,7 @@
     <item>
         <bitmap
             android:scaleType="fitXY"
-            android:gravity="center"
+            android:gravity="fill_horizontal|fill_vertical"
             android:src="@mipmap/ar_splash_2"
             />
     </item>
