@@ -6,14 +6,18 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,8 +25,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -52,10 +58,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double CurrentLat;
     private double CurrentLong;
     private GeoApiContext mContext;
-    public TextView Dest;
+    public EditText Dest;
     Geocache geod;
     CalculateDirections Cal;
     FormatForCommunication Formatter = new FormatForCommunication();
+    private static Handler updateUIHandler = null;
+    private final static int MESSAGE_ACTIVATE_MARKERS = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -70,12 +79,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         FindRoute = findViewById(R.id.Go_Button);
         Transmit_To_Device = findViewById(R.id.Go_Button_2);
         Markers = findViewById(R.id.button2);
+        Markers.setEnabled(false);
+        Transmit_To_Device.setEnabled(false);
         mContext = new GeoApiContext().setApiKey("AIzaSyAU-jSsThQo2f4Ne0ijd8qScR67JFaeHKY");
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         geod = new Geocache(geocoder);
         Dest = findViewById(R.id.editText);
         requestPermission();
         client = LocationServices.getFusedLocationProviderClient(this);
+        updateUIElements();
+        Markers.setVisibility(View.GONE);
         SearchDevices.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
                 Intent in = new Intent(MainActivity.this, ListDevices.class);
@@ -85,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         FindRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FindRoute.setEnabled(false);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -111,18 +125,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         Dir.Calulate_Distance();
                         Cal = new CalculateDirections(Dir.getLatitudes(),Dir.getLongitudes(),Dir.Turn_Index);
+                        Message message = new Message();
+                        message.what = MESSAGE_ACTIVATE_MARKERS;
+                        updateUIHandler.sendMessage(message);
                     }
                 }).start();
-
-
+                //Markers.setEnabled(true);
             }
         });
         Markers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMap.addMarker(new MarkerOptions().position(origin).title("Start"));
-                mMap.addMarker(new MarkerOptions().position(destination).title("Finish"));
-                moveToCurrentLocation(origin);
+                getLoc();
+                moveToCurrentLocation(new LatLng(CurrentLat,CurrentLong));
+                mMap.addCircle(new CircleOptions().center(new LatLng(CurrentLat,CurrentLong)).radius(7).fillColor(Color.GREEN));
             }
         });
         Transmit_To_Device.setOnClickListener(new View.OnClickListener() {
@@ -216,11 +232,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }).start();
             }
         });
+
+
     }
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-        map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        //map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
+        moveToCurrentLocation(new LatLng(51.499114, -0.174825));
+
+
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -306,6 +328,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //view5.setText(temp);
         //view4.setText(knownName);
 
+    }
+    public void updateUIElements(){
+        if(updateUIHandler == null)
+        {
+            updateUIHandler = new Handler()
+            {
+                @Override
+                public void handleMessage(Message msg) {
+                    // Means the message is sent from child thread.
+                    if(msg.what == MESSAGE_ACTIVATE_MARKERS)
+                    {
+                        // Update ui in main thread.
+                        Markers.setEnabled(true);
+                        Transmit_To_Device.setEnabled(true);
+                        FindRoute.setEnabled(true);
+                        mMap.addMarker(new MarkerOptions().position(origin).title("Start"));
+                        mMap.addMarker(new MarkerOptions().position(destination).title("Finish"));
+                        mMap.addPolyline(new PolylineOptions().add(origin,new LatLng(Dir.Turn_Lat.elementAt(0),Dir.Turn_Long.elementAt(0))).width(5).color(Color.BLUE));
+                        for(int i = 0; i < Dir.Turn_Lat.size()-1;i++){
+                            mMap.addPolyline(new PolylineOptions().add(new LatLng(Dir.Turn_Lat.elementAt(i),Dir.Turn_Long.elementAt(i)),new LatLng(Dir.Turn_Lat.elementAt(i+1),Dir.Turn_Long.elementAt(i+1))).width(5).color(Color.BLUE));
+                        }
+                        moveToCurrentLocation(origin);
+                        Markers.setVisibility(View.VISIBLE);
+                    }
+                }
+            };
+        }
     }
     public LatLng LookUpAdress(String Location) throws IOException{
         double latitude = 0;

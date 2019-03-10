@@ -9,75 +9,40 @@
     tools:context=".MainActivity">
 
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="42dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/logo_for_splash" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:fontFamily="sans-serif"
-        android:text="ARide"
-        android:textColor="@color/white"
-        android:textSize="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mapView"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="409dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Switch
-        android:id="@+id/switch1"
-        android:layout_width="124dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Bluetooth"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.032"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
     <Button
         android:id="@+id/Search_BT"
         style="@style/button1"
         android:layout_width="218dp"
         android:layout_height="36dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="Search Device"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/switch1"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/mapView"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="492dp"
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="108dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/editText"
-        app:layout_constraintTop_toBottomOf="@+id/Search_BT" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/aride2" />
 
     <EditText
         android:id="@+id/editText"
+        style="@style/Base.Widget.MaterialComponents.TextInputEditText"
         android:layout_width="328dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -85,9 +50,11 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_corners"
         android:ems="10"
         android:inputType="text|textPersonName"
-        android:text="Enter Destination"
+        android:hint="Enter Destination"
+        android:textColorHint="@color/white"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/Go_Button"
         app:layout_constraintEnd_toEndOf="parent"
@@ -123,13 +90,13 @@
 
     <Button
         android:id="@+id/button2"
-        style="@style/button1"
+        style="@style/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:text="View On Map"
-        app:layout_constraintBottom_toBottomOf="@+id/mapView"
+        android:text="Recenter"
+        app:layout_constraintBottom_toTopOf="@+id/editText"
         app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>
