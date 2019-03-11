@@ -66,8 +66,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     FormatForCommunication Formatter = new FormatForCommunication();
     private static Handler updateUIHandler = null;
     private final static int MESSAGE_ACTIVATE_MARKERS = 1;
+    private final static int MESSAGE_REQUEST_LOW_ACCURACY = 2;
     int step = 10;
     public ToggleSwitchButton toggle;
+    public boolean Request_Low;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -118,6 +120,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         else {
                             destination = dest;
+                        }
+                        if(Calculate_Instant_Distance(destination.latitude,destination.longitude) > 500){
+                            Message message1 = new Message();
+                            message1.what = MESSAGE_REQUEST_LOW_ACCURACY;
+                            updateUIHandler.sendMessage(message1);
                         }
                         origin = new LatLng(CurrentLat,CurrentLong);
                         Dir.requestDirection(origin,destination);
@@ -369,6 +376,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                         moveToCurrentLocation(origin);
                         Markers.setVisibility(View.VISIBLE);
+                    }
+                    if(msg.what == MESSAGE_REQUEST_LOW_ACCURACY){
+                        Toast.makeText(MainActivity.this, "This is a Long Route, please consider switching to Low Accuracy", Toast.LENGTH_LONG).show();
                     }
                 }
             };
