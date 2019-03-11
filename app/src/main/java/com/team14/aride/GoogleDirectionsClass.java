@@ -83,30 +83,30 @@ public class GoogleDirectionsClass implements DirectionCallback {
 
     }
 
-    public String Forward() throws IOException {
+    public String Forward(int jump) throws IOException {
         String CurrentStreet = "";
-        if(count < Latitudes.length) {
-            End_Of_Instructions = false;
-            String currentString = geo.snapToRoads(Latitudes[count], Longitudes[count]);
-            count = count + 1;
-            //count = count + 3;
-            String[] col = currentString.split(",",5);
-            int s = col.length;
-            String g = Integer.toString(s);
-            //view4.setText(g);
-            if(s>3){
-                CurrentStreet = col[1];
-                if(CurrentStreet.equals(" South Kensington") || CurrentStreet.equals(" Knightsbridge")){
+        if(Latitudes!=null) {
+            if (count < Latitudes.length) {
+                End_Of_Instructions = false;
+                String currentString = geo.snapToRoads(Latitudes[count], Longitudes[count]);
+                count = count + jump;
+                //count = count + 3;
+                String[] col = currentString.split(",", 5);
+                int s = col.length;
+                String g = Integer.toString(s);
+                //view4.setText(g);
+                if (s > 3) {
+                    CurrentStreet = col[1];
+                    if (CurrentStreet.equals(" South Kensington") || CurrentStreet.equals(" Knightsbridge")) {
+                        CurrentStreet = col[0];
+                    }
+                } else {
                     CurrentStreet = col[0];
                 }
-            }
-            else{
-                CurrentStreet = col[0];
-            }
 
-        }
-        else{
-            End_Of_Instructions = true;
+            } else {
+                End_Of_Instructions = true;
+            }
         }
         curr = CurrentStreet;
         return CurrentStreet;
@@ -130,13 +130,13 @@ public class GoogleDirectionsClass implements DirectionCallback {
     public int getCount() {
         return count;
     }
-    public void Calculate_Turns() throws IOException {
-        curr = Forward();
+    public void Calculate_Turns(int jump) throws IOException {
+        curr = Forward(jump);
         int star = 0;
         String hold = curr;
         begin = curr;
-        for(int i = 0; !End_Of_Instructions ;i++){
-            curr = Forward();
+        for(int i = 0; !End_Of_Instructions ;i = i+jump){
+            curr = Forward(jump);
             if(curr.equals(hold)){
 
             }

@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -32,4 +33,5 @@ dependencies {
     implementation 'com.akexorcist:googledirectionlibrary:1.1.1'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.android.gms:play-services:12.0.1'
+    implementation 'co.aenterhy:toggleswitch:1.0.0'
 }

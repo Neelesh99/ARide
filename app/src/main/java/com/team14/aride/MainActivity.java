@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,6 +34,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.maps.GeoApiContext;
+import co.aenterhy.toggleswitch.ToggleSwitchButton;
 
 import java.io.IOException;
 import java.util.List;
@@ -64,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     FormatForCommunication Formatter = new FormatForCommunication();
     private static Handler updateUIHandler = null;
     private final static int MESSAGE_ACTIVATE_MARKERS = 1;
-
+    int step = 10;
+    public ToggleSwitchButton toggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Dir.requestDirection(origin,destination);
                         Delay(5000);
                         try {
-                            Dir.Calculate_Turns();
+                            Dir.Calculate_Turns(step);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -160,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         //BluetoothComm.ConnectedThread.write write = new BluetoothComm.ConnectedThread.write(transmit);
                         Con.write(transmit);
                         try {
-                            Dir.Forward();
+                            Dir.Forward(1);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -231,6 +234,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                 }).start();
+            }
+        });
+        toggle = (ToggleSwitchButton) findViewById(R.id.toggle);
+        toggle.setOnTriggerListener(new ToggleSwitchButton.OnTriggerListener() {
+            @Override
+            public void toggledUp() {
+                Toast.makeText(MainActivity.this, "High Accuracy", Toast.LENGTH_SHORT).show();
+                step = 1;
+            }
+
+            @Override
+            public void toggledDown() {
+                Toast.makeText(MainActivity.this, "Low Accuracy", Toast.LENGTH_SHORT).show();
+                step = 10;
             }
         });
 
