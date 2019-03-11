@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 FindRoute.setEnabled(false);
+                mMap.clear();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
